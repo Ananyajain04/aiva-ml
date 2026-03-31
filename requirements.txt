@@ -1,0 +1,6 @@
+easyocr
+pyspellchecker
+matplotlib
+Pillow
+numpy
+opencv-python
