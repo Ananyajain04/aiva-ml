@@ -11,6 +11,10 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 
+# Generated OCR outputs
+orc/optimized_output/*
+!orc/optimized_output/.gitkeep
+
 # OS/editor artifacts
 .DS_Store
 Thumbs.db
