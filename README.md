@@ -1,33 +1,112 @@
-# aiva-ml
+# Avia ML Service
 
-This workspace contains two notebook-based ML projects:
+This repository contains a FastAPI ML micro-service for the Avia dementia-care app, plus supporting notebooks for OCR and Alzheimer's quiz modeling.
 
-- OCR pipeline using EasyOCR
-- Alzheimer's progression quiz modeling and forecasting
+## What is in this repo
+
+- FastAPI service with ML endpoints: routine hints, lunch prediction, behaviour flags, report summarization, face match, sensor rhythm, adaptive reminders, and daily quiz generation.
+- Notebook workflows:
+   - OCR workflow (`notebooks/ocr/easy_ocr.ipynb`)
+   - Alzheimer's quiz modeling (`notebooks/alzheimers_model_quiz/alzheimers_model.ipynb`)
 
 ## Project structure
 
-- `orc/easy_ocr.ipynb`: OCR and image optimization workflow
-- `orc/optimized_output/`: generated OCR/optimized image outputs
-- `alzheimers_model_quiz/alzheimers_model.ipynb`: quiz scoring, stage estimation, and progression forecasting
-- `alzheimers_model_quiz/alzheimers_grade_history.csv`: sample/history input data for the Alzheimer's notebook
-- `requirements.txt`: shared Python dependencies
+```text
+.
+|-- app/
+|   |-- main.py
+|   |-- config.py
+|   |-- models/
+|   |   |-- schemas.py
+|   |-- routers/
+|   |   |-- insights.py
+|   |-- services/
+|       |-- behaviour_service.py
+|       |-- face_service.py
+|       |-- lunch_service.py
+|       |-- quiz_service.py
+|       |-- report_service.py
+|       |-- routine_service.py
+|       |-- sensor_service.py
+|       |-- summary_service.py
+|-- scripts/
+|   |-- populate_demo_data.py
+|-- notebooks/
+|   |-- ocr/
+|   |   |-- easy_ocr.ipynb
+|   |   |-- optimized_output/
+|   |-- alzheimers_model_quiz/
+|       |-- alzheimers_model.ipynb
+|       |-- alzheimers_grade_history.csv
+|-- Dockerfile
+|-- docker-compose.yml
+|-- requirements.txt
+|-- run.sh
+```
 
-## Setup
+## Local setup
 
-1. Create and activate a virtual environment.
-2. Install dependencies:
+### Windows (PowerShell)
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
+```
 
-## Run notebooks
+### macOS / Linux
 
-- Open and run `orc/easy_ocr.ipynb` for OCR processing.
-- Open and run `alzheimers_model_quiz/alzheimers_model.ipynb` for progression analysis.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+uvicorn app.main:app --host 0.0.0.0 --port 8100 --reload
+```
 
-## Notes
+Service URLs:
 
-- Update notebook input paths (for example `IMAGE_PATH`) as needed for local files.
-- OCR outputs are generated in `orc/optimized_output/`.
+- API docs: `http://localhost:8100/docs`
+- Health check: `http://localhost:8100/health`
+
+## Docker
+
+```bash
+docker compose up --build
+```
+
+The service will be available on port `8100`.
+
+## Environment variables
+
+Create a `.env` file in the repo root only if you want to override defaults:
+
+```env
+AVIA_BACKEND_URL=https://aiva-backend-tnp0.onrender.com
+ML_SERVICE_PORT=8100
+ML_SERVICE_HOST=0.0.0.0
+OPENAI_API_KEY=
+HUGGINGFACE_API_TOKEN=
+HUGGINGFACE_SUMMARY_MODEL=Falconsai/medical_summarization
+FACE_MODEL=small
+```
+
+## Seed demo data (optional)
+
+```bash
+python scripts/populate_demo_data.py
+```
+
+This seeds realistic patient, caregiver, medication, activity, sensor, and quiz logs into the configured backend.
+
+## Notebook usage
+
+- OCR notebook: open `notebooks/ocr/easy_ocr.ipynb`.
+- Alzheimer's notebook: open `notebooks/alzheimers_model_quiz/alzheimers_model.ipynb`.
+
+Notes:
+
+- Update notebook input paths (for example `IMAGE_PATH`) for your local files.
+- OCR outputs are written to `notebooks/ocr/optimized_output/`.

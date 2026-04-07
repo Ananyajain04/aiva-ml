@@ -1,0 +1,11 @@
+# Avia ML micro-service — same image as Dockerfile
+# Usage (from this directory):
+#   docker compose up --build
+# Then point the iOS app at http://localhost:8100 (Simulator) or http://<your-mac-lan-ip>:8100 (device).
+services:
+  ml:
+    build: .
+    ports:
+      - "8100:8100"
+    environment:
+      AVIA_BACKEND_URL: https://aiva-backend-tnp0.onrender.com
